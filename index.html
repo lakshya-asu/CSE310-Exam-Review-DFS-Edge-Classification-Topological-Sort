@@ -1023,18 +1023,18 @@ Alternatively:
                 <div class="subsection">
                     <h3>Interactive Topological Sort</h3>
                     <div class="info-box">
-                        <strong>Problem:</strong> Compute topological sort of DAG with vertices {a,b,c,d,e,f} using DFS.
+                        <strong>Problem:</strong> Compute topological sort for course prerequisite DAG. Courses must be taken in an order that respects all prerequisites.
                     </div>
                     <div class="viz-container">
                         <div class="step-controls">
                             <button class="btn btn-secondary" onclick="m3PrevStep()">← Previous</button>
-                            <span class="step-indicator" id="m3-step">Step 1 of 13</span>
+                            <span class="step-indicator" id="m3-step">Step 1 of 15</span>
                             <button class="btn btn-secondary" onclick="m3NextStep()">Next →</button>
                             <button class="btn btn-secondary" onclick="m3Reset()">Reset</button>
                         </div>
-                        <div id="m3-operation" class="operation-text">Starting DFS from vertex a</div>
-                        <canvas id="m3Canvas" width="900" height="550"></canvas>
-                        <div id="m3-explanation" class="explanation-text">Initialize: All vertices WHITE, topological order = []</div>
+                        <div id="m3-operation" class="operation-text">Starting DFS from CS100</div>
+                        <canvas id="m3Canvas" width="900" height="600"></canvas>
+                        <div id="m3-explanation" class="explanation-text">Initialize: All courses undiscovered, topological order = []</div>
                     </div>
 
                     <div class="legend">
@@ -1057,41 +1057,39 @@ Alternatively:
                     <h3>Practice Questions</h3>
 
                     <div class="content-card">
-                        <h4>Q1: Compute Topological Sort</h4>
-                        <p><strong>Question:</strong> Given DAG with vertices {p,q,r,s,t} and edges p→q, p→r, q→s, r→s, r→t, s→t, compute a topological sort showing the DFS process.</p>
+                        <h4>Q1: Compute Topological Sort for New Course Set</h4>
+                        <p><strong>Question:</strong> Given a new course DAG with courses {CS150, CS220, CS240, CS350} and prerequisites: CS150→CS220, CS150→CS240, CS220→CS350, CS240→CS350. Compute a topological sort showing the DFS process and final valid course sequence.</p>
                         <button class="btn" onclick="toggleSolution('m3q1-sol')">Show Solution</button>
                         <div id="m3q1-sol" class="solution-content" style="display: none;">
-                            <canvas id="m3q1Canvas" width="800" height="400"></canvas>
-                            <div class="code-block">DFS Execution (starting from p):
+                            <canvas id="m3q1Canvas" width="800" height="450"></canvas>
+                            <div class="code-block">DFS Execution (starting from CS150):
 
-1. Visit p: d[p]=1
-2. Visit q: d[q]=2
-3. Visit s: d[s]=3
-4. Visit t: d[t]=4
-5. Finish t: f[t]=5, add t to FRONT of list → [t]
-6. Finish s: f[s]=6, add s to FRONT → [s,t]
-7. Finish q: f[q]=7, add q to FRONT → [q,s,t]
-8. Visit r (from p): d[r]=8
-9. r→s: s is BLACK, skip
-10. r→t: t is BLACK, skip
-11. Finish r: f[r]=9, add r to FRONT → [r,q,s,t]
-12. Finish p: f[p]=10, add p to FRONT → [p,r,q,s,t]
+1. Visit CS150: d[CS150]=1
+2. Visit CS220: d[CS220]=2 (from CS150)
+3. Visit CS350: d[CS350]=3 (from CS220)
+4. Finish CS350: f[CS350]=4, add to FRONT → [CS350]
+5. Finish CS220: f[CS220]=5, add to FRONT → [CS220, CS350]
+6. Visit CS240: d[CS240]=6 (back to CS150)
+7. CS240→CS350: CS350 is BLACK, skip
+8. Finish CS240: f[CS240]=7, add to FRONT → [CS240, CS220, CS350]
+9. Finish CS150: f[CS150]=8, add to FRONT → [CS150, CS240, CS220, CS350]
 
-Final topological order: p, r, q, s, t
-
-Verification:
-  p→q: p before q ✓
-  p→r: p before r ✓
-  q→s: q before s ✓
-  r→s: r before s ✓
-  r→t: r before t ✓
-  s→t: s before t ✓</div>
+Final topological order (valid course sequence):
+  CS150, CS240, CS220, CS350
+  OR
+  CS150, CS220, CS240, CS350
+  
+Both are valid! Key properties:
+  CS150→CS220: CS150 before CS220 ✓
+  CS150→CS240: CS150 before CS240 ✓
+  CS220→CS350: CS220 before CS350 ✓
+  CS240→CS350: CS240 before CS350 ✓</div>
                         </div>
                     </div>
 
                     <div class="content-card">
-                        <h4>Q2: Why DAGs Only?</h4>
-                        <p><strong>Question:</strong> Why must the graph be acyclic for topological sort to work? What happens if there's a cycle?</p>
+                        <h4>Q2: Adding a Cycle to Prerequisites</h4>
+                        <p><strong>Question:</strong> If we add an edge CS400→CS100 to the course prerequisite graph, what happens? Why can't we perform topological sort? Explain in the context of course prerequisites.</p>
                         <button class="btn" onclick="toggleSolution('m3q2-sol')">Show Solution</button>
                         <div id="m3q2-sol" class="solution-content" style="display: none;">
                             <h4>Solution:</h4>
@@ -1127,8 +1125,8 @@ Verification:
                     </div>
 
                     <div class="content-card">
-                        <h4>Q3: Edge Property Proof</h4>
-                        <p><strong>Question:</strong> Prove that if edge (u,v) exists in a DAG, then u appears before v in the topological ordering.</p>
+                        <h4>Q3: Prerequisite Property Proof</h4>
+                        <p><strong>Question:</strong> Prove that if edge (u,v) exists in a DAG (representing "u is prerequisite for v"), then u appears before v in any topological ordering. Use the course prerequisite context.</p>
                         <button class="btn" onclick="toggleSolution('m3q3-sol')">Show Solution</button>
                         <div id="m3q3-sol" class="solution-content" style="display: none;">
                             <h4>Solution:</h4>
@@ -1191,12 +1189,23 @@ Verification:
         };
 
         const topoPos = {
-            a: [150, 100],
-            b: [300, 100],
-            c: [150, 250],
-            d: [450, 100],
-            e: [600, 100],
-            f: [300, 250]
+            CS100: [100, 150],
+            CS200: [250, 100],
+            CS250: [250, 200],
+            CS300: [400, 150],
+            CS310: [550, 100],
+            CS320: [400, 250],
+            CS400: [700, 150]
+        };
+
+        const courseNames = {
+            CS100: "Intro Programming",
+            CS200: "Data Structures",
+            CS250: "Discrete Math",
+            CS300: "Algorithms",
+            CS310: "Advanced DS",
+            CS320: "Database",
+            CS400: "Senior Project"
         };
 
         // Module 1: DFS on Directed Graphs
@@ -1411,20 +1420,22 @@ Verification:
         const module3Data = {
             currentStep: 0,
             steps: [
-                {time:0,action:"Initialize all WHITE",colors:{a:'WHITE',b:'WHITE',c:'WHITE',d:'WHITE',e:'WHITE',f:'WHITE'},disc:{},finish:{},stack:[],order:[],exp:"Start DFS, topological order = []"},
-                {time:1,action:"Visit a, d[a]=1",colors:{a:'GRAY',b:'WHITE',c:'WHITE',d:'WHITE',e:'WHITE',f:'WHITE'},disc:{a:1},finish:{},stack:['a'],order:[],exp:"Begin DFS from a"},
-                {time:2,action:"Visit b (from a), d[b]=2",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'WHITE',e:'WHITE',f:'WHITE'},disc:{a:1,b:2},finish:{},stack:['a','b'],order:[],exp:"Explore edge a→b"},
-                {time:3,action:"Visit d (from b), d[d]=3",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'GRAY',e:'WHITE',f:'WHITE'},disc:{a:1,b:2,d:3},finish:{},stack:['a','b','d'],order:[],exp:"Explore edge b→d"},
-                {time:4,action:"Finish d, f[d]=4",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'BLACK',e:'WHITE',f:'WHITE'},disc:{a:1,b:2,d:3},finish:{d:4},stack:['a','b'],order:['d'],exp:"d has no WHITE neighbors, finish d, add to FRONT of order"},
-                {time:5,action:"Visit e (from b), d[e]=5",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'BLACK',e:'GRAY',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{d:4},stack:['a','b','e'],order:['d'],exp:"Back to b, explore edge b→e"},
-                {time:6,action:"Finish e, f[e]=6",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{d:4,e:6},stack:['a','b'],order:['e','d'],exp:"e has no WHITE neighbors, finish e, add to FRONT"},
-                {time:7,action:"Finish b, f[b]=7",colors:{a:'GRAY',b:'BLACK',c:'WHITE',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{b:7,d:4,e:6},stack:['a'],order:['b','e','d'],exp:"All edges from b explored, finish b, add to FRONT"},
-                {time:8,action:"Finish a, f[a]=8",colors:{a:'BLACK',b:'BLACK',c:'WHITE',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{a:8,b:7,d:4,e:6},stack:[],order:['a','b','e','d'],exp:"All edges from a explored, finish a, add to FRONT"},
-                {time:9,action:"Visit c, d[c]=9",colors:{a:'BLACK',b:'BLACK',c:'GRAY',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,c:9,d:3,e:5},finish:{a:8,b:7,d:4,e:6},stack:['c'],order:['a','b','e','d'],exp:"Start new DFS tree from c"},
-                {time:10,action:"Visit f (from c), d[f]=10",colors:{a:'BLACK',b:'BLACK',c:'GRAY',d:'BLACK',e:'BLACK',f:'GRAY'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,d:4,e:6},stack:['c','f'],order:['a','b','e','d'],exp:"Explore edge c→f"},
-                {time:11,action:"Finish f, f[f]=11",colors:{a:'BLACK',b:'BLACK',c:'GRAY',d:'BLACK',e:'BLACK',f:'BLACK'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,d:4,e:6,f:11},stack:['c'],order:['f','a','b','e','d'],exp:"f has no outgoing edges, finish f, add to FRONT"},
-                {time:12,action:"Finish c, f[c]=12",colors:{a:'BLACK',b:'BLACK',c:'BLACK',d:'BLACK',e:'BLACK',f:'BLACK'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,c:12,d:4,e:6,f:11},stack:[],order:['c','f','a','b','e','d'],exp:"Finish c, add to FRONT. DFS complete!"},
-                {time:12,action:"Final Topological Order",colors:{a:'BLACK',b:'BLACK',c:'BLACK',d:'BLACK',e:'BLACK',f:'BLACK'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,c:12,d:4,e:6,f:11},stack:[],order:['c','f','a','b','d','e'],exp:"Topological order: c, f, a, b, d, e (by decreasing finish time)"}
+                {time:0,action:"Initialize all WHITE",colors:{CS100:'WHITE',CS200:'WHITE',CS250:'WHITE',CS300:'WHITE',CS310:'WHITE',CS320:'WHITE',CS400:'WHITE'},disc:{},finish:{},stack:[],order:[],exp:"Start DFS on course prerequisite DAG, topological order = []"},
+                {time:1,action:"Visit CS100, d[CS100]=1",colors:{CS100:'GRAY',CS200:'WHITE',CS250:'WHITE',CS300:'WHITE',CS310:'WHITE',CS320:'WHITE',CS400:'WHITE'},disc:{CS100:1},finish:{},stack:['CS100'],order:[],exp:"Begin DFS from CS100 (Intro Programming) - no prerequisites"},
+                {time:2,action:"Visit CS200, d[CS200]=2",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'WHITE',CS310:'WHITE',CS320:'WHITE',CS400:'WHITE'},disc:{CS100:1,CS200:2},finish:{},stack:['CS100','CS200'],order:[],exp:"Explore CS100→CS200 (need Intro before Data Structures)"},
+                {time:3,action:"Visit CS300, d[CS300]=3",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'GRAY',CS310:'WHITE',CS320:'WHITE',CS400:'WHITE'},disc:{CS100:1,CS200:2,CS300:3},finish:{},stack:['CS100','CS200','CS300'],order:[],exp:"Explore CS200→CS300 (need Data Structures before Algorithms)"},
+                {time:4,action:"Visit CS310, d[CS310]=4",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'GRAY',CS310:'GRAY',CS320:'WHITE',CS400:'WHITE'},disc:{CS100:1,CS200:2,CS300:3,CS310:4},finish:{},stack:['CS100','CS200','CS300','CS310'],order:[],exp:"Explore CS300→CS310 (need Algorithms before Advanced DS)"},
+                {time:5,action:"Visit CS400, d[CS400]=5",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'GRAY',CS310:'GRAY',CS320:'WHITE',CS400:'GRAY'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS400:5},finish:{},stack:['CS100','CS200','CS300','CS310','CS400'],order:[],exp:"Explore CS310→CS400 (Advanced DS is prerequisite for Senior Project)"},
+                {time:6,action:"Finish CS400, f[CS400]=6",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'GRAY',CS310:'GRAY',CS320:'WHITE',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS400:5},finish:{CS400:6},stack:['CS100','CS200','CS300','CS310'],order:['CS400'],exp:"CS400 complete, add to FRONT of topological order"},
+                {time:7,action:"Finish CS310, f[CS310]=7",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'GRAY',CS310:'BLACK',CS320:'WHITE',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS400:5},finish:{CS310:7,CS400:6},stack:['CS100','CS200','CS300'],order:['CS310','CS400'],exp:"CS310 complete, add to FRONT"},
+                {time:8,action:"Finish CS300, f[CS300]=8",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'BLACK',CS310:'BLACK',CS320:'WHITE',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS400:5},finish:{CS300:8,CS310:7,CS400:6},stack:['CS100','CS200'],order:['CS300','CS310','CS400'],exp:"CS300 complete, add to FRONT"},
+                {time:9,action:"Visit CS320, d[CS320]=9",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'BLACK',CS310:'BLACK',CS320:'GRAY',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS300:8,CS310:7,CS400:6},stack:['CS100','CS200','CS320'],order:['CS300','CS310','CS400'],exp:"Back to CS200, explore CS200→CS320 (need Data Structures before Database)"},
+                {time:10,action:"Finish CS320, f[CS320]=10",colors:{CS100:'GRAY',CS200:'GRAY',CS250:'WHITE',CS300:'BLACK',CS310:'BLACK',CS320:'BLACK',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS300:8,CS310:7,CS320:10,CS400:6},stack:['CS100','CS200'],order:['CS320','CS300','CS310','CS400'],exp:"CS320→CS400: CS400 already BLACK, finish CS320, add to FRONT"},
+                {time:11,action:"Finish CS200, f[CS200]=11",colors:{CS100:'GRAY',CS200:'BLACK',CS250:'WHITE',CS300:'BLACK',CS310:'BLACK',CS320:'BLACK',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS200:11,CS300:8,CS310:7,CS320:10,CS400:6},stack:['CS100'],order:['CS200','CS320','CS300','CS310','CS400'],exp:"CS200 complete, add to FRONT"},
+                {time:12,action:"Visit CS250, d[CS250]=12",colors:{CS100:'GRAY',CS200:'BLACK',CS250:'GRAY',CS300:'BLACK',CS310:'BLACK',CS320:'BLACK',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS250:12,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS200:11,CS300:8,CS310:7,CS320:10,CS400:6},stack:['CS100','CS250'],order:['CS200','CS320','CS300','CS310','CS400'],exp:"Back to CS100, explore CS100→CS250 (need Intro before Discrete Math)"},
+                {time:13,action:"Finish CS250, f[CS250]=13",colors:{CS100:'GRAY',CS200:'BLACK',CS250:'BLACK',CS300:'BLACK',CS310:'BLACK',CS320:'BLACK',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS250:12,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS200:11,CS250:13,CS300:8,CS310:7,CS320:10,CS400:6},stack:['CS100'],order:['CS250','CS200','CS320','CS300','CS310','CS400'],exp:"CS250→CS300: CS300 already BLACK, finish CS250, add to FRONT"},
+                {time:14,action:"Finish CS100, f[CS100]=14",colors:{CS100:'BLACK',CS200:'BLACK',CS250:'BLACK',CS300:'BLACK',CS310:'BLACK',CS320:'BLACK',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS250:12,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS100:14,CS200:11,CS250:13,CS300:8,CS310:7,CS320:10,CS400:6},stack:[],order:['CS100','CS250','CS200','CS320','CS300','CS310','CS400'],exp:"CS100 complete, add to FRONT. DFS complete! All courses processed."},
+                {time:14,action:"Final Course Sequence",colors:{CS100:'BLACK',CS200:'BLACK',CS250:'BLACK',CS300:'BLACK',CS310:'BLACK',CS320:'BLACK',CS400:'BLACK'},disc:{CS100:1,CS200:2,CS250:12,CS300:3,CS310:4,CS320:9,CS400:5},finish:{CS100:14,CS200:11,CS250:13,CS300:8,CS310:7,CS320:10,CS400:6},stack:[],order:['CS100','CS250','CS200','CS320','CS300','CS310','CS400'],exp:"Valid course sequence respecting all prerequisites. You can take courses in this order!"}
             ]
         };
 
@@ -1438,75 +1449,87 @@ Verification:
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             // Draw edges
-            const edges = [['a','b'],['a','d'],['b','d'],['b','e'],['c','f'],['d','e']];
+            const edges = [['CS100','CS200'],['CS100','CS250'],['CS200','CS300'],['CS250','CS300'],['CS300','CS310'],['CS200','CS320'],['CS310','CS400'],['CS320','CS400']];
             edges.forEach(([u,v]) => {
                 drawArrow(ctx, topoPos[u][0], topoPos[u][1], topoPos[v][0], topoPos[v][1], '#999999', 2, false);
             });
             
-            // Draw vertices
-            ['a','b','c','d','e','f'].forEach(v => {
+            // Draw vertices with course codes
+            ['CS100','CS200','CS250','CS300','CS310','CS320','CS400'].forEach(v => {
                 const [x, y] = topoPos[v];
                 const color = step.colors[v];
                 let fillColor = color === 'WHITE' ? '#FFFFFF' : color === 'GRAY' ? '#999999' : '#333333';
                 
+                // Draw rounded rectangle for course
                 ctx.fillStyle = fillColor;
                 ctx.beginPath();
-                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.roundRect(x - 40, y - 25, 80, 50, 8);
                 ctx.fill();
                 ctx.strokeStyle = '#333333';
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 
+                // Course code
                 ctx.fillStyle = color === 'BLACK' ? '#FFFFFF' : '#333333';
-                ctx.font = 'bold 18px sans-serif';
+                ctx.font = 'bold 14px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(v, x, y + 6);
+                ctx.fillText(v, x, y - 2);
+                
+                // Course name
+                ctx.font = '10px sans-serif';
+                ctx.fillText(courseNames[v], x, y + 12);
                 
                 // Timestamps
                 const d = step.disc[v] || '-';
                 const f = step.finish[v] || '-';
-                ctx.font = '13px var(--font-family-mono)';
+                ctx.font = '12px var(--font-family-mono)';
                 ctx.fillStyle = '#d67a2e';
-                ctx.fillText(d + '/' + f, x, y - 45);
+                ctx.fillText(d + '/' + f, x, y - 40);
             });
             
             // Draw info
             ctx.fillStyle = '#333333';
             ctx.font = '14px var(--font-family-mono)';
             ctx.textAlign = 'left';
-            ctx.fillText('Time: ' + step.time, 20, 370);
-            ctx.fillText('Stack: [' + step.stack.join(', ') + ']', 20, 400);
-            ctx.fillText('Topological Order: [' + step.order.join(', ') + ']', 20, 430);
+            ctx.fillText('Time: ' + step.time, 20, 420);
+            ctx.fillText('Stack: [' + step.stack.join(', ') + ']', 20, 450);
+            
+            // Topological order with wrapping
+            const orderStr = step.order.join(' → ');
+            ctx.fillText('Course Sequence: ', 20, 480);
+            ctx.fillText(orderStr, 180, 480);
             
             // Draw final ordering visually if complete
             if (module3Data.currentStep === module3Data.steps.length - 1) {
                 ctx.fillStyle = '#e0f2f1';
-                ctx.fillRect(10, 460, 880, 70);
+                ctx.fillRect(10, 510, 880, 70);
                 ctx.strokeStyle = '#26a69a';
                 ctx.lineWidth = 2;
-                ctx.strokeRect(10, 460, 880, 70);
+                ctx.strokeRect(10, 510, 880, 70);
                 
                 ctx.fillStyle = '#333333';
-                ctx.font = 'bold 16px sans-serif';
-                ctx.fillText('Final Topological Order:', 20, 485);
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('✓ Valid Course Sequence (respecting all prerequisites):', 20, 535);
                 
-                const orderSpacing = 120;
+                // Draw course sequence
+                const orderSpacing = 115;
                 step.order.forEach((v, idx) => {
-                    const x = 70 + idx * orderSpacing;
-                    const y = 505;
+                    const x = 50 + idx * orderSpacing;
+                    const y = 560;
                     
                     ctx.fillStyle = '#26a69a';
                     ctx.beginPath();
-                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.roundRect(x - 30, y - 15, 60, 30, 5);
                     ctx.fill();
                     
                     ctx.fillStyle = '#FFFFFF';
-                    ctx.font = 'bold 16px sans-serif';
+                    ctx.font = 'bold 11px sans-serif';
                     ctx.textAlign = 'center';
-                    ctx.fillText(v, x, y + 5);
+                    ctx.fillText(v, x, y + 3);
                     
                     if (idx < step.order.length - 1) {
-                        drawArrow(ctx, x + 20, y, x + orderSpacing - 20, y, '#26a69a', 2, false);
+                        drawArrow(ctx, x + 30, y, x + orderSpacing - 30, y, '#26a69a', 2, false);
                     }
                 });
             }
@@ -1678,64 +1701,64 @@ Verification:
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            const pos = {p:[100,150],q:[250,100],r:[250,200],s:[400,100],t:[400,200]};
-            const edges = [['p','q'],['p','r'],['q','s'],['r','s'],['r','t'],['s','t']];
-            const timestamps = {p:[1,10],q:[2,7],r:[8,9],s:[3,6],t:[4,5]};
+            const pos = {CS150:[150,150],CS220:[350,100],CS240:[350,200],CS350:[550,150]};
+            const edges = [['CS150','CS220'],['CS150','CS240'],['CS220','CS350'],['CS240','CS350']];
+            const timestamps = {CS150:[1,8],CS220:[2,5],CS240:[6,7],CS350:[3,4]};
             
             edges.forEach(([u,v]) => {
                 drawArrow(ctx, pos[u][0], pos[u][1], pos[v][0], pos[v][1], '#999999', 2, false);
             });
             
-            ['p','q','r','s','t'].forEach(v => {
+            ['CS150','CS220','CS240','CS350'].forEach(v => {
                 const [x,y] = pos[v];
                 ctx.fillStyle = '#333333';
                 ctx.beginPath();
-                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.roundRect(x - 35, y - 22, 70, 44, 6);
                 ctx.fill();
                 ctx.strokeStyle = '#333333';
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 18px sans-serif';
+                ctx.font = 'bold 14px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(v, x, y + 6);
+                ctx.fillText(v, x, y + 4);
                 
                 const [d,f] = timestamps[v];
-                ctx.font = '13px var(--font-family-mono)';
+                ctx.font = '12px var(--font-family-mono)';
                 ctx.fillStyle = '#d67a2e';
-                ctx.fillText(d + '/' + f, x, y - 45);
+                ctx.fillText(d + '/' + f, x, y - 38);
             });
             
             // Draw topological order
-            const order = ['p','r','q','s','t'];
+            const order = ['CS150','CS240','CS220','CS350'];
             ctx.fillStyle = '#e0f2f1';
-            ctx.fillRect(50, 300, 700, 70);
+            ctx.fillRect(50, 320, 700, 100);
             ctx.strokeStyle = '#26a69a';
             ctx.lineWidth = 2;
-            ctx.strokeRect(50, 300, 700, 70);
+            ctx.strokeRect(50, 320, 700, 100);
             
             ctx.fillStyle = '#333333';
             ctx.font = 'bold 14px sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText('Topological Order:', 60, 325);
+            ctx.fillText('Valid Course Sequence (by decreasing finish time):', 60, 345);
             
             order.forEach((v, idx) => {
-                const x = 100 + idx * 120;
-                const y = 345;
+                const x = 120 + idx * 150;
+                const y = 380;
                 
                 ctx.fillStyle = '#26a69a';
                 ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.roundRect(x - 30, y - 18, 60, 36, 5);
                 ctx.fill();
                 
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 16px sans-serif';
+                ctx.font = 'bold 12px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(v, x, y + 5);
+                ctx.fillText(v, x, y + 3);
                 
                 if (idx < order.length - 1) {
-                    drawArrow(ctx, x + 20, y, x + 100, y, '#26a69a', 2, false);
+                    drawArrow(ctx, x + 30, y, x + 120, y, '#26a69a', 2, false);
                 }
             });
         }
@@ -1770,6 +1793,22 @@ Verification:
             event.target.classList.add('active');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Polyfill for roundRect (for older browsers)
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                if (width < 2 * radius) radius = width / 2;
+                if (height < 2 * radius) radius = height / 2;
+                this.beginPath();
+                this.moveTo(x + radius, y);
+                this.arcTo(x + width, y, x + width, y + height, radius);
+                this.arcTo(x + width, y + height, x, y + height, radius);
+                this.arcTo(x, y + height, x, y, radius);
+                this.arcTo(x, y, x + width, y, radius);
+                this.closePath();
+                return this;
+            };
         }
 
         // Initialize on load
