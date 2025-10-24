@@ -1,0 +1,488 @@
+{
+  "problem": "Perform topological sort on course prerequisite DAG (courses must be taken in valid order)",
+  "graph": {
+    "vertices": [
+      "CS100",
+      "CS200",
+      "CS250",
+      "CS300",
+      "CS310",
+      "CS320",
+      "CS400"
+    ],
+    "vertex_labels": {
+      "CS100": "Intro Programming",
+      "CS200": "Data Structures",
+      "CS250": "Discrete Math",
+      "CS300": "Algorithms",
+      "CS310": "Advanced DS",
+      "CS320": "Database",
+      "CS400": "Senior Project"
+    },
+    "edges": [
+      [
+        "CS100",
+        "CS200"
+      ],
+      [
+        "CS100",
+        "CS250"
+      ],
+      [
+        "CS200",
+        "CS300"
+      ],
+      [
+        "CS250",
+        "CS300"
+      ],
+      [
+        "CS300",
+        "CS310"
+      ],
+      [
+        "CS200",
+        "CS320"
+      ],
+      [
+        "CS310",
+        "CS400"
+      ],
+      [
+        "CS320",
+        "CS400"
+      ]
+    ]
+  },
+  "steps": [
+    {
+      "step": 0,
+      "description": "Initialize: All courses unvisited (WHITE)",
+      "colors": {
+        "CS100": "WHITE",
+        "CS200": "WHITE",
+        "CS250": "WHITE",
+        "CS300": "WHITE",
+        "CS310": "WHITE",
+        "CS320": "WHITE",
+        "CS400": "WHITE"
+      },
+      "discovery": {},
+      "finish": {},
+      "topological_order": [],
+      "explanation": "Start DFS to compute finish times for topological ordering"
+    },
+    {
+      "step": 1,
+      "description": "Visit CS100, d[CS100]=1",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "WHITE",
+        "CS250": "WHITE",
+        "CS300": "WHITE",
+        "CS310": "WHITE",
+        "CS320": "WHITE",
+        "CS400": "WHITE"
+      },
+      "discovery": {
+        "CS100": 1
+      },
+      "finish": {},
+      "topological_order": [],
+      "explanation": "Start DFS from CS100 (Intro Programming)"
+    },
+    {
+      "step": 2,
+      "description": "From CS100\u2192CS200, d[CS200]=2",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "WHITE",
+        "CS310": "WHITE",
+        "CS320": "WHITE",
+        "CS400": "WHITE"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2
+      },
+      "finish": {},
+      "topological_order": [],
+      "explanation": "Explore prerequisite: CS100 \u2192 CS200 (Data Structures)"
+    },
+    {
+      "step": 3,
+      "description": "From CS200\u2192CS300, d[CS300]=3",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "GRAY",
+        "CS310": "WHITE",
+        "CS320": "WHITE",
+        "CS400": "WHITE"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3
+      },
+      "finish": {},
+      "topological_order": [],
+      "explanation": "Continue: CS200 \u2192 CS300 (Algorithms)"
+    },
+    {
+      "step": 4,
+      "description": "From CS300\u2192CS310, d[CS310]=4",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "GRAY",
+        "CS310": "GRAY",
+        "CS320": "WHITE",
+        "CS400": "WHITE"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4
+      },
+      "finish": {},
+      "topological_order": [],
+      "explanation": "Continue: CS300 \u2192 CS310 (Advanced Data Structures)"
+    },
+    {
+      "step": 5,
+      "description": "From CS310\u2192CS400, d[CS400]=5",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "GRAY",
+        "CS310": "GRAY",
+        "CS320": "WHITE",
+        "CS400": "GRAY"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS400": 5
+      },
+      "finish": {},
+      "topological_order": [],
+      "explanation": "Continue: CS310 \u2192 CS400 (Senior Project)"
+    },
+    {
+      "step": 6,
+      "description": "Finish CS400, f[CS400]=6",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "GRAY",
+        "CS310": "GRAY",
+        "CS320": "WHITE",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS400": 5
+      },
+      "finish": {
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS400"
+      ],
+      "explanation": "CS400 fully explored. Add to front of topological order."
+    },
+    {
+      "step": 7,
+      "description": "Finish CS310, f[CS310]=7",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "GRAY",
+        "CS310": "BLACK",
+        "CS320": "WHITE",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS400": 5
+      },
+      "finish": {
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "CS310 done. Add to front of order."
+    },
+    {
+      "step": 8,
+      "description": "Finish CS300, f[CS300]=8",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "WHITE",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS400": 5
+      },
+      "finish": {
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "CS300 done. Add to front."
+    },
+    {
+      "step": 9,
+      "description": "From CS200\u2192CS320, d[CS320]=9",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "GRAY",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS320": 9,
+        "CS400": 5
+      },
+      "finish": {
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "Back at CS200, explore another child: CS200 \u2192 CS320 (Database)"
+    },
+    {
+      "step": 10,
+      "description": "Finish CS320, f[CS320]=10",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "GRAY",
+        "CS250": "WHITE",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "BLACK",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS320": 9,
+        "CS400": 5
+      },
+      "finish": {
+        "CS320": 10,
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS320",
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "CS320 done (CS400 already visited). Add to front."
+    },
+    {
+      "step": 11,
+      "description": "Finish CS200, f[CS200]=11",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "BLACK",
+        "CS250": "WHITE",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "BLACK",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS300": 3,
+        "CS310": 4,
+        "CS320": 9,
+        "CS400": 5
+      },
+      "finish": {
+        "CS200": 11,
+        "CS320": 10,
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS200",
+        "CS320",
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "CS200 done. Add to front."
+    },
+    {
+      "step": 12,
+      "description": "From CS100\u2192CS250, d[CS250]=12",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "BLACK",
+        "CS250": "GRAY",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "BLACK",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS250": 12,
+        "CS300": 3,
+        "CS310": 4,
+        "CS320": 9,
+        "CS400": 5
+      },
+      "finish": {
+        "CS200": 11,
+        "CS320": 10,
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS200",
+        "CS320",
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "Back at CS100, explore CS100 \u2192 CS250 (Discrete Math)"
+    },
+    {
+      "step": 13,
+      "description": "Finish CS250, f[CS250]=13",
+      "colors": {
+        "CS100": "GRAY",
+        "CS200": "BLACK",
+        "CS250": "BLACK",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "BLACK",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS250": 12,
+        "CS300": 3,
+        "CS310": 4,
+        "CS320": 9,
+        "CS400": 5
+      },
+      "finish": {
+        "CS250": 13,
+        "CS200": 11,
+        "CS320": 10,
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS250",
+        "CS200",
+        "CS320",
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "CS250 done (CS300 already visited). Add to front."
+    },
+    {
+      "step": 14,
+      "description": "Finish CS100, f[CS100]=14. COMPLETE!",
+      "colors": {
+        "CS100": "BLACK",
+        "CS200": "BLACK",
+        "CS250": "BLACK",
+        "CS300": "BLACK",
+        "CS310": "BLACK",
+        "CS320": "BLACK",
+        "CS400": "BLACK"
+      },
+      "discovery": {
+        "CS100": 1,
+        "CS200": 2,
+        "CS250": 12,
+        "CS300": 3,
+        "CS310": 4,
+        "CS320": 9,
+        "CS400": 5
+      },
+      "finish": {
+        "CS100": 14,
+        "CS250": 13,
+        "CS200": 11,
+        "CS320": 10,
+        "CS300": 8,
+        "CS310": 7,
+        "CS400": 6
+      },
+      "topological_order": [
+        "CS100",
+        "CS250",
+        "CS200",
+        "CS320",
+        "CS300",
+        "CS310",
+        "CS400"
+      ],
+      "explanation": "CS100 done. Add to front. Topological order complete! This is a valid course sequence."
+    }
+  ],
+  "interpretation": "The topological order CS100 \u2192 CS250 \u2192 CS200 \u2192 CS320 \u2192 CS300 \u2192 CS310 \u2192 CS400 represents a valid course-taking sequence that respects all prerequisites."
+}

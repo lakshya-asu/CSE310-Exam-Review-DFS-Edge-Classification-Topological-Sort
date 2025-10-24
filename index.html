@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE310 Exam Review - Advanced DFS Topics</title>
+    <style>
+        :root {
+  --color-white: rgba(255, 255, 255, 1);
+  --color-black: rgba(0, 0, 0, 1);
+  --color-cream-50: rgba(252, 252, 249, 1);
+  --color-cream-100: rgba(255, 255, 253, 1);
+  --color-gray-200: rgba(245, 245, 245, 1);
+  --color-gray-300: rgba(167, 169, 169, 1);
+  --color-gray-400: rgba(119, 124, 124, 1);
+  --color-slate-500: rgba(98, 108, 113, 1);
+  --color-brown-600: rgba(94, 82, 64, 1);
+  --color-charcoal-700: rgba(31, 33, 33, 1);
+  --color-charcoal-800: rgba(38, 40, 40, 1);
+  --color-slate-900: rgba(19, 52, 59, 1);
+  --color-teal-300: rgba(50, 184, 198, 1);
+  --color-teal-400: rgba(45, 166, 178, 1);
+  --color-teal-500: rgba(33, 128, 141, 1);
+  --color-teal-600: rgba(29, 116, 128, 1);
+  --color-teal-700: rgba(26, 104, 115, 1);
+  --color-teal-800: rgba(41, 150, 161, 1);
+  --color-red-400: rgba(255, 84, 89, 1);
+  --color-red-500: rgba(192, 21, 47, 1);
+  --color-orange-400: rgba(230, 129, 97, 1);
+  --color-orange-500: rgba(168, 75, 47, 1);
+
+  --color-brown-600-rgb: 94, 82, 64;
+  --color-teal-500-rgb: 33, 128, 141;
+  --color-slate-900-rgb: 19, 52, 59;
+  --color-slate-500-rgb: 98, 108, 113;
+  --color-red-500-rgb: 192, 21, 47;
+  --color-red-400-rgb: 255, 84, 89;
+  --color-orange-500-rgb: 168, 75, 47;
+  --color-orange-400-rgb: 230, 129, 97;
+
+  --color-bg-1: rgba(59, 130, 246, 0.08);
+  --color-bg-2: rgba(245, 158, 11, 0.08);
+  --color-bg-3: rgba(34, 197, 94, 0.08);
+  --color-bg-4: rgba(239, 68, 68, 0.08);
+  --color-bg-5: rgba(147, 51, 234, 0.08);
+  --color-bg-6: rgba(249, 115, 22, 0.08);
+  --color-bg-7: rgba(236, 72, 153, 0.08);
+  --color-bg-8: rgba(6, 182, 212, 0.08);
+
+  --color-background: var(--color-cream-50);
+  --color-surface: var(--color-cream-100);
+  --color-text: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-500);
+  --color-primary: var(--color-teal-500);
+  --color-primary-hover: var(--color-teal-600);
+  --color-primary-active: var(--color-teal-700);
+  --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-secondary-active: rgba(var(--color-brown-600-rgb), 0.25);
+  --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+  --color-btn-primary-text: var(--color-cream-50);
+  --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-card-border-inner: rgba(var(--color-brown-600-rgb), 0.12);
+  --color-error: var(--color-red-500);
+  --color-success: var(--color-teal-500);
+  --color-warning: var(--color-orange-500);
+  --color-info: var(--color-slate-500);
+  --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
+
+  --font-family-base: "FKGroteskNeue", "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "Berkeley Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+  --font-size-4xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 600;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --letter-spacing-tight: -0.01em;
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-gray-400-rgb: 119, 124, 124;
+    --color-teal-300-rgb: 50, 184, 198;
+    --color-gray-300-rgb: 167, 169, 169;
+    --color-gray-200-rgb: 245, 245, 245;
+
+    --color-bg-1: rgba(29, 78, 216, 0.15);
+    --color-bg-2: rgba(180, 83, 9, 0.15);
+    --color-bg-3: rgba(21, 128, 61, 0.15);
+    --color-bg-4: rgba(185, 28, 28, 0.15);
+    --color-bg-5: rgba(107, 33, 168, 0.15);
+    --color-bg-6: rgba(194, 65, 12, 0.15);
+    --color-bg-7: rgba(190, 24, 93, 0.15);
+    --color-bg-8: rgba(8, 145, 178, 0.15);
+
+    --color-background: var(--color-charcoal-700);
+    --color-surface: var(--color-charcoal-800);
+    --color-text: var(--color-gray-200);
+    --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+    --color-primary: var(--color-teal-300);
+    --color-primary-hover: var(--color-teal-400);
+    --color-primary-active: var(--color-teal-800);
+    --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+    --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+    --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+    --color-btn-primary-text: var(--color-slate-900);
+    --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+    --color-card-border-inner: rgba(var(--color-gray-400-rgb), 0.15);
+  }
+}
+
+@font-face {
+  font-family: 'FKGroteskNeue';
+  src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-bottom: var(--space-16);
+}
+
+h1 { font-size: var(--font-size-4xl); }
+h2 { font-size: var(--font-size-3xl); }
+h3 { font-size: var(--font-size-2xl); }
+h4 { font-size: var(--font-size-xl); }
+
+p { margin-bottom: var(--space-12); }
+ul, ol { margin-left: var(--space-24); margin-bottom: var(--space-12); }
+li { margin-bottom: var(--space-8); }
+
+code {
+  font-family: var(--font-family-mono);
+  font-size: calc(var(--font-size-base) * 0.9);
+  background-color: var(--color-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-24);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-32);
+  padding-bottom: var(--space-24);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.header h1 {
+  margin-bottom: var(--space-8);
+}
+
+.header p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: var(--space-8);
+  margin-bottom: var(--space-32);
+  border-bottom: 2px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.nav-tab {
+  padding: var(--space-12) var(--space-20);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all var(--duration-fast) var(--ease-standard);
+  margin-bottom: -2px;
+}
+
+.nav-tab:hover {
+  color: var(--color-text);
+  background-color: var(--color-bg-1);
+}
+
+.nav-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+  animation: fadeIn var(--duration-normal) var(--ease-standard);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.content-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-24);
+  margin-bottom: var(--space-24);
+  box-shadow: var(--shadow-sm);
+}
+
+.subsection {
+  margin-top: var(--space-32);
+}
+
+.subsection:first-child {
+  margin-top: 0;
+}
+
+.viz-container {
+  background: var(--color-bg-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  padding: var(--space-20);
+  margin: var(--space-20) 0;
+  min-height: 500px;
+}
+
+.code-block {
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  padding: var(--space-16);
+  margin: var(--space-16) 0;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  overflow-x: auto;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.highlight {
+  background: var(--color-bg-3);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.info-box {
+  background: var(--color-bg-2);
+  border-left: 4px solid var(--color-primary);
+  padding: var(--space-16);
+  margin: var(--space-16) 0;
+  border-radius: var(--radius-base);
+}
+
+.info-box strong {
+  display: block;
+  margin-bottom: var(--space-8);
+  color: var(--color-primary);
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-20);
+  margin: var(--space-20) 0;
+}
+
+@media (max-width: 768px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-box {
+  background: var(--color-bg-5);
+  padding: var(--space-16);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--color-border);
+}
+
+.module-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-24);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+  text-align: center;
+}
+
+.module-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--color-primary);
+}
+
+.module-card h3 {
+  color: var(--color-primary);
+  margin-bottom: var(--space-12);
+}
+
+.btn {
+  display: inline-block;
+  padding: var(--space-12) var(--space-24);
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border: none;
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.btn:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  background: var(--color-primary-active);
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover {
+  background: var(--color-secondary-hover);
+}
+
+.step-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-16);
+  margin-bottom: var(--space-16);
+  flex-wrap: wrap;
+}
+
+.step-indicator {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  min-width: 120px;
+  text-align: center;
+}
+
+.operation-text {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  text-align: center;
+  padding: var(--space-12);
+  background: var(--color-bg-1);
+  border-radius: var(--radius-base);
+  margin-bottom: var(--space-16);
+}
+
+.explanation-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-12);
+  background: var(--color-bg-2);
+  border-radius: var(--radius-base);
+  margin-top: var(--space-16);
+  line-height: 1.6;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  background: #FFFFFF;
+  border: 1px solid #ddd;
+  border-radius: var(--radius-base);
+  max-width: 100%;
+  height: auto;
+}
+
+.solution-content {
+  margin-top: var(--space-16);
+  padding-top: var(--space-16);
+  border-top: 2px solid var(--color-border);
+  animation: fadeIn var(--duration-normal) var(--ease-standard);
+}
+
+.complexity-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-16) 0;
+}
+
+.complexity-table th,
+.complexity-table td {
+  padding: var(--space-12);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.complexity-table th {
+  background: var(--color-bg-1);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.complexity-table tr:hover {
+  background: var(--color-bg-2);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--color-bg-3);
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-right: var(--space-8);
+}
+
+.legend {
+  display: flex;
+  gap: var(--space-16);
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-16);
+  padding: var(--space-12);
+  background: var(--color-bg-1);
+  border-radius: var(--radius-base);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.legend-color {
+  width: 30px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #333333;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>CSE310 Exam Review</h1>
+            <p>Advanced DFS Topics (Parts 5-8)</p>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('landing')">Overview</button>
+            <button class="nav-tab" onclick="showSection('module1')">DFS Directed Graphs</button>
+            <button class="nav-tab" onclick="showSection('module2')">Edge Classification</button>
+            <button class="nav-tab" onclick="showSection('module3')">Topological Sort</button>
+        </nav>
+
+        <!-- Landing Section -->
+        <section id="landing" class="section active">
+            <div class="content-card">
+                <h2>Advanced DFS Topics</h2>
+                <p>This interactive review covers three advanced depth-first search topics critical for your exam:</p>
+
+                <div class="two-col" style="margin-top: var(--space-32);">
+                    <div class="module-card" onclick="showSection('module1')">
+                        <h3>🔍 Module 1</h3>
+                        <h4>DFS on Directed Graphs</h4>
+                        <p>Master DFS algorithm on directed graphs with discovery and finish times, DFS forest construction, and key theorems.</p>
+                        <ul style="text-align: left; margin-top: var(--space-16);">
+                            <li>White-Path Theorem</li>
+                            <li>Parenthesis Theorem</li>
+                            <li>Nesting of Intervals</li>
+                            <li>Step-by-step execution</li>
+                        </ul>
+                    </div>
+
+                    <div class="module-card" onclick="showSection('module2')">
+                        <h3>🎨 Module 2</h3>
+                        <h4>Edge Classification</h4>
+                        <p>Learn to classify edges as tree, back, forward, or cross edges during and after DFS execution.</p>
+                        <ul style="text-align: left; margin-top: var(--space-16);">
+                            <li>Four edge types</li>
+                            <li>Classification rules</li>
+                            <li>Timestamp analysis</li>
+                            <li>Cycle detection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="two-col">
+                    <div class="module-card" onclick="showSection('module3')">
+                        <h3>📊 Module 3</h3>
+                        <h4>Topological Sort</h4>
+                        <p>Understand DAGs and compute topological orderings using DFS with finish-time ordering.</p>
+                        <ul style="text-align: left; margin-top: var(--space-16);">
+                            <li>DAG properties</li>
+                            <li>Finish-time ordering</li>
+                            <li>Correctness proof</li>
+                            <li>Applications</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box" style="display: flex; flex-direction: column; justify-content: center;">
+                        <h4>📚 How to Use This Review</h4>
+                        <ol style="margin-top: var(--space-12);">
+                            <li>Select a module from the cards or tabs</li>
+                            <li>Study the theory and key concepts</li>
+                            <li>Step through interactive visualizations</li>
+                            <li>Test yourself with practice questions</li>
+                            <li>Review solutions with detailed explanations</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 1: DFS on Directed Graphs -->
+        <section id="module1" class="section">
+            <div class="content-card">
+                <h2>Module 1: DFS on Directed Graphs</h2>
+
+                <div class="subsection">
+                    <h3>Theory Overview</h3>
+                    <p>Depth-First Search on directed graphs extends the basic DFS algorithm with additional properties and theorems that help analyze graph structure.</p>
+
+                    <h4>DFS Algorithm</h4>
+                    <div class="code-block">DFS(G):
+    for each vertex u ∈ G.V:
+        color[u] = WHITE
+        π[u] = NIL
+    time = 0
+    
+    for each vertex u ∈ G.V:
+        if color[u] = WHITE:
+            DFS-Visit(G, u)
+
+DFS-Visit(G, u):
+    time = time + 1              // discovery time
+    d[u] = time
+    color[u] = GRAY
+    
+    for each v ∈ Adj[u]:         // explore edges
+        if color[v] = WHITE:
+            π[v] = u
+            DFS-Visit(G, v)
+    
+    color[u] = BLACK
+    time = time + 1              // finish time
+    f[u] = time</div>
+
+                    <div class="info-box">
+                        <strong>Key Concepts:</strong>
+                        <ul>
+                            <li><strong>Discovery time d[u]:</strong> When vertex u is first discovered (turns GRAY)</li>
+                            <li><strong>Finish time f[u]:</strong> When exploration from u is complete (turns BLACK)</li>
+                            <li><strong>Invariant:</strong> For all vertices u, we have d[u] &lt; f[u]</li>
+                            <li><strong>Time range:</strong> 1 ≤ d[u] &lt; f[u] ≤ 2|V|</li>
+                        </ul>
+                    </div>
+
+                    <h4>Key Theorems</h4>
+                    
+                    <div class="feature-box">
+                        <h4>White-Path Theorem</h4>
+                        <p>Vertex v is a descendant of u in the DFS forest if and only if at time d[u], there exists a white path from u to v (a path consisting entirely of white vertices).</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <h4>Parenthesis Theorem</h4>
+                        <p>For any two vertices u and v, exactly one of the following holds:</p>
+                        <ul>
+                            <li>Intervals [d[u], f[u]] and [d[v], f[v]] are disjoint (neither is descendant of other)</li>
+                            <li>Interval [d[u], f[u]] is contained in [d[v], f[v]] (u is descendant of v)</li>
+                            <li>Interval [d[v], f[v]] is contained in [d[u], f[u]] (v is descendant of u)</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-box">
+                        <h4>Nesting of Intervals</h4>
+                        <p>Vertex v is a proper descendant of u if and only if d[u] &lt; d[v] &lt; f[v] &lt; f[u].</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Interactive DFS Walkthrough</h3>
+                    <div class="info-box">
+                        <strong>Problem:</strong> Run DFS on the directed graph with vertices {a,b,c,x,y,z} starting from vertex 'a'.
+                    </div>
+                    <div class="viz-container">
+                        <div class="step-controls">
+                            <button class="btn btn-secondary" onclick="m1PrevStep()">← Previous</button>
+                            <span class="step-indicator" id="m1-step">Step 1 of 15</span>
+                            <button class="btn btn-secondary" onclick="m1NextStep()">Next →</button>
+                            <button class="btn btn-secondary" onclick="m1Reset()">Reset</button>
+                        </div>
+                        <div id="m1-operation" class="operation-text">Starting DFS from vertex a</div>
+                        <canvas id="m1Canvas" width="900" height="550"></canvas>
+                        <div id="m1-explanation" class="explanation-text">Initialize: All vertices WHITE, time = 0</div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #FFFFFF;"></div>
+                            <span>WHITE (undiscovered)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #999999;"></div>
+                            <span>GRAY (discovered)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #333333;"></div>
+                            <span>BLACK (finished)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Practice Questions</h3>
+
+                    <div class="content-card">
+                        <h4>Q1: Trace DFS Execution</h4>
+                        <p><strong>Question:</strong> Given a directed graph with vertices {s,t,u,v} and edges s→t, s→u, t→v, u→v, v→t, trace DFS starting from s. Show all discovery and finish times.</p>
+                        <button class="btn" onclick="toggleSolution('m1q1-sol')">Show Solution</button>
+                        <div id="m1q1-sol" class="solution-content" style="display: none;">
+                            <canvas id="m1q1Canvas" width="800" height="400"></canvas>
+                            <div class="code-block">DFS Execution:
+
+1. Visit s: d[s]=1, color[s]=GRAY
+2. Explore s→t: Visit t, d[t]=2, color[t]=GRAY
+3. Explore t→v: Visit v, d[v]=3, color[v]=GRAY
+4. Explore v→t: t is GRAY (back edge), skip
+5. Finish v: f[v]=4, color[v]=BLACK
+6. Finish t: f[t]=5, color[t]=BLACK
+7. Explore s→u: Visit u, d[u]=6, color[u]=GRAY
+8. Explore u→v: v is BLACK (forward edge), skip
+9. Finish u: f[u]=7, color[u]=BLACK
+10. Finish s: f[s]=8, color[s]=BLACK
+
+Final timestamps:
+  s: [1/8]  t: [2/5]  u: [6/7]  v: [3/4]</div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>Q2: White-Path Theorem Application</h4>
+                        <p><strong>Question:</strong> Using the DFS from the interactive walkthrough, explain why y is a descendant of a using the White-Path Theorem.</p>
+                        <button class="btn" onclick="toggleSolution('m1q2-sol')">Show Solution</button>
+                        <div id="m1q2-sol" class="solution-content" style="display: none;">
+                            <h4>Solution:</h4>
+                            <p><strong>White-Path Theorem states:</strong> v is a descendant of u in the DFS forest if and only if at time d[u], there exists a white path from u to v.</p>
+                            <p><strong>For vertices a and y:</strong></p>
+                            <ul>
+                                <li>At time d[a]=1, vertex a turns GRAY</li>
+                                <li>At this moment, vertices b, x, y, z, c are all WHITE</li>
+                                <li>There exists a white path: a → b → y (both b and y are WHITE)</li>
+                                <li>Therefore, by the White-Path Theorem, y is a descendant of a</li>
+                                <li>This is confirmed by the nested intervals: d[a]=1 &lt; d[y]=3 &lt; f[y]=4 &lt; f[a]=8</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>Q3: Parenthesis Theorem Analysis</h4>
+                        <p><strong>Question:</strong> Given timestamps a:[1/8], b:[2/5], x:[6/7], determine the relationship between these vertices using the Parenthesis Theorem.</p>
+                        <button class="btn" onclick="toggleSolution('m1q3-sol')">Show Solution</button>
+                        <div id="m1q3-sol" class="solution-content" style="display: none;">
+                            <h4>Solution:</h4>
+                            <p><strong>Analyzing interval relationships:</strong></p>
+                            <div class="code-block">Vertex a: [1, 8]
+Vertex b: [2, 5]
+Vertex x: [6, 7]
+
+Compare a and b:
+  [2,5] is contained within [1,8]
+  → b is a descendant of a
+
+Compare a and x:
+  [6,7] is contained within [1,8]
+  → x is a descendant of a
+
+Compare b and x:
+  [2,5] and [6,7] are disjoint
+  → Neither is descendant of the other
+  → They are siblings in the DFS tree</div>
+                            <p><strong>Conclusion:</strong> Both b and x are children of a in the DFS tree, making them siblings. This is why their timestamp intervals don't overlap.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 2: Edge Classification -->
+        <section id="module2" class="section">
+            <div class="content-card">
+                <h2>Module 2: Edge Classification</h2>
+
+                <div class="subsection">
+                    <h3>Theory Overview</h3>
+                    <p>DFS can classify every edge in a directed graph into one of four types based on the color of the destination vertex when the edge is explored.</p>
+
+                    <h4>Four Edge Types</h4>
+                    
+                    <div class="two-col">
+                        <div class="feature-box" style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10B981;">
+                            <h4 style="color: #10B981;">Tree Edge</h4>
+                            <p>Edge (u,v) where v is WHITE when explored. These edges form the DFS forest.</p>
+                            <p><strong>Rule:</strong> color[v] = WHITE when examining (u,v)</p>
+                        </div>
+
+                        <div class="feature-box" style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #EF4444;">
+                            <h4 style="color: #EF4444;">Back Edge</h4>
+                            <p>Edge (u,v) where v is GRAY when explored. Points to an ancestor in DFS tree. Indicates a cycle!</p>
+                            <p><strong>Rule:</strong> color[v] = GRAY when examining (u,v)</p>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="feature-box" style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3B82F6;">
+                            <h4 style="color: #3B82F6;">Forward Edge</h4>
+                            <p>Edge (u,v) where v is BLACK and v is a descendant of u. Points from ancestor to descendant (non-tree edge).</p>
+                            <p><strong>Rule:</strong> color[v] = BLACK and d[u] &lt; d[v] &lt; f[v] &lt; f[u]</p>
+                        </div>
+
+                        <div class="feature-box" style="background: rgba(249, 115, 34, 0.1); border-left: 4px solid #F97316;">
+                            <h4 style="color: #F97316;">Cross Edge</h4>
+                            <p>Edge (u,v) where v is BLACK but v is not a descendant of u. All other edges.</p>
+                            <p><strong>Rule:</strong> color[v] = BLACK and intervals disjoint</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Important Facts:</strong>
+                        <ul>
+                            <li>In an <strong>undirected graph</strong>, only tree and back edges exist</li>
+                            <li>In a <strong>directed graph</strong>, all four edge types can exist</li>
+                            <li>Back edges indicate cycles in the graph</li>
+                            <li>A DAG (Directed Acyclic Graph) has no back edges</li>
+                        </ul>
+                    </div>
+
+                    <h4>Classification Using Timestamps</h4>
+                    <div class="code-block">For edge (u,v) after DFS completion:
+
+if d[u] &lt; d[v] &lt; f[v] &lt; f[u]:     // v's interval nested in u's
+    if (u,v) was used in DFS:
+        TREE EDGE
+    else:
+        FORWARD EDGE
+else if d[v] &lt; d[u] &lt; f[u] &lt; f[v]:  // u's interval nested in v's
+    BACK EDGE
+else:                                // intervals disjoint
+    CROSS EDGE</div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Interactive Edge Classification</h3>
+                    <div class="info-box">
+                        <strong>Problem:</strong> Using the completed DFS from Module 1, classify each of the 8 edges in the graph.
+                    </div>
+                    <div class="viz-container">
+                        <div class="step-controls">
+                            <button class="btn btn-secondary" onclick="m2PrevStep()">← Previous</button>
+                            <span class="step-indicator" id="m2-step">Edge 1 of 8</span>
+                            <button class="btn btn-secondary" onclick="m2NextStep()">Next →</button>
+                            <button class="btn btn-secondary" onclick="m2Reset()">Reset</button>
+                        </div>
+                        <div id="m2-operation" class="operation-text">Classifying edge (a,b)</div>
+                        <canvas id="m2Canvas" width="900" height="550"></canvas>
+                        <div id="m2-explanation" class="explanation-text">Edge (a,b): b is WHITE when explored from a → Tree Edge</div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10B981;"></div>
+                            <span>Tree Edge</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #EF4444;"></div>
+                            <span>Back Edge</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #3B82F6;"></div>
+                            <span>Forward Edge</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #F97316;"></div>
+                            <span>Cross Edge</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Practice Questions</h3>
+
+                    <div class="content-card">
+                        <h4>Q1: Classify All Edges</h4>
+                        <p><strong>Question:</strong> Given a directed graph with DFS timestamps: a:[1/10], b:[2/5], c:[6/9], d:[3/4], e:[7/8]. Edges: (a,b), (a,c), (b,d), (c,e), (d,b). Classify each edge.</p>
+                        <button class="btn" onclick="toggleSolution('m2q1-sol')">Show Solution</button>
+                        <div id="m2q1-sol" class="solution-content" style="display: none;">
+                            <canvas id="m2q1Canvas" width="800" height="400"></canvas>
+                            <div class="code-block">Edge Classification:
+
+(a,b): a:[1/10], b:[2/5]
+  - [2/5] nested in [1/10]
+  - Tree edge (forms DFS tree)
+  → TREE EDGE
+
+(a,c): a:[1/10], c:[6/9]
+  - [6/9] nested in [1/10]
+  - Tree edge (forms DFS tree)
+  → TREE EDGE
+
+(b,d): b:[2/5], d:[3/4]
+  - [3/4] nested in [2/5]
+  - Tree edge (forms DFS tree)
+  → TREE EDGE
+
+(c,e): c:[6/9], e:[7/8]
+  - [7/8] nested in [6/9]
+  - Tree edge (forms DFS tree)
+  → TREE EDGE
+
+(d,b): d:[3/4], b:[2/5]
+  - [3/4] nested in [2/5]
+  - d's interval inside b's interval
+  - Points from descendant to ancestor
+  → BACK EDGE (indicates cycle!)</div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>Q2: Cycle Detection</h4>
+                        <p><strong>Question:</strong> Explain how to detect a cycle in a directed graph using DFS. Why do back edges indicate cycles?</p>
+                        <button class="btn" onclick="toggleSolution('m2q2-sol')">Show Solution</button>
+                        <div id="m2q2-sol" class="solution-content" style="display: none;">
+                            <h4>Solution:</h4>
+                            <p><strong>Cycle Detection Algorithm:</strong></p>
+                            <ol>
+                                <li>Run DFS on the graph</li>
+                                <li>During DFS, classify each edge as it's explored</li>
+                                <li>If any back edge is found, the graph contains a cycle</li>
+                                <li>If no back edges exist, the graph is acyclic (a DAG)</li>
+                            </ol>
+                            <p><strong>Why back edges indicate cycles:</strong></p>
+                            <ul>
+                                <li>A back edge (u,v) connects a vertex u to an ancestor v in the DFS tree</li>
+                                <li>There exists a tree path from v down to u (by definition of DFS tree)</li>
+                                <li>The back edge (u,v) completes the cycle: v → ... → u → v</li>
+                                <li>Example: If we have tree edges a→b→c and back edge c→a, then a→b→c→a is a cycle</li>
+                            </ul>
+                            <p><strong>Implementation:</strong></p>
+                            <div class="code-block">has_cycle(G):
+    run DFS(G)
+    for each edge (u,v) in G.E:
+        if color[v] = GRAY when (u,v) explored:
+            return True  // back edge found
+    return False  // no back edges</div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>Q3: Undirected Graphs</h4>
+                        <p><strong>Question:</strong> In an undirected graph, why are there only tree and back edges? Why can't forward or cross edges exist?</p>
+                        <button class="btn" onclick="toggleSolution('m2q3-sol')">Show Solution</button>
+                        <div id="m2q3-sol" class="solution-content" style="display: none;">
+                            <h4>Solution:</h4>
+                            <p><strong>Key insight:</strong> In an undirected graph, if edge {u,v} exists, it can be traversed in both directions: u↔v.</p>
+                            
+                            <p><strong>Why only tree and back edges:</strong></p>
+                            <ul>
+                                <li><strong>Tree edges:</strong> When we first explore edge {u,v} and find v is WHITE, it becomes a tree edge. This is the same as directed graphs.</li>
+                                <li><strong>Back edges:</strong> If we try to explore {u,v} and v is GRAY (ancestor), it's a back edge pointing to an ancestor.</li>
+                            </ul>
+
+                            <p><strong>Why NO forward edges:</strong></p>
+                            <ul>
+                                <li>Suppose edge {u,v} exists and v is a descendant of u</li>
+                                <li>Since v is a descendant, we visited v while exploring from u</li>
+                                <li>This means we already explored edge {u,v} when v was WHITE</li>
+                                <li>So {u,v} was classified as a tree edge, not a forward edge</li>
+                            </ul>
+
+                            <p><strong>Why NO cross edges:</strong></p>
+                            <ul>
+                                <li>Suppose edge {u,v} exists and we explore it from u when v is BLACK</li>
+                                <li>Since v is BLACK, we finished exploring v before starting u</li>
+                                <li>But if {u,v} exists, we would have explored it from v's side</li>
+                                <li>At that time, u would have been WHITE (not yet visited)</li>
+                                <li>So {v,u} would have been a tree edge from v to u</li>
+                                <li>Contradiction: the edge was already classified!</li>
+                            </ul>
+
+                            <p><strong>Conclusion:</strong> In undirected graphs, every edge is classified exactly once (when first explored), and it's either a tree edge (destination WHITE) or back edge (destination GRAY). Forward and cross edges cannot exist.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Module 3: Topological Sort -->
+        <section id="module3" class="section">
+            <div class="content-card">
+                <h2>Module 3: Topological Sort</h2>
+
+                <div class="subsection">
+                    <h3>Theory Overview</h3>
+                    
+                    <h4>Directed Acyclic Graph (DAG)</h4>
+                    <p>A <strong>DAG</strong> is a directed graph with no cycles. Many real-world problems naturally form DAGs:</p>
+                    <ul>
+                        <li><strong>Task scheduling:</strong> Tasks with dependencies (must do A before B)</li>
+                        <li><strong>Course prerequisites:</strong> Take Data Structures before Algorithms</li>
+                        <li><strong>Build systems:</strong> Compile dependencies in correct order</li>
+                        <li><strong>Inheritance hierarchies:</strong> Class inheritance in programming</li>
+                    </ul>
+
+                    <h4>Topological Sort Definition</h4>
+                    <div class="info-box">
+                        <strong>Topological Sort:</strong>
+                        <p>A linear ordering of vertices such that for every directed edge (u,v), vertex u appears before vertex v in the ordering.</p>
+                        <p><strong>Example:</strong> If tasks have dependencies A→B, A→C, B→D, C→D, one valid ordering is: A, B, C, D (or A, C, B, D)</p>
+                    </div>
+
+                    <h4>Algorithm</h4>
+                    <div class="code-block">Topological-Sort(G):
+    1. Call DFS(G) to compute finish times f[v] for all v
+    2. As each vertex is finished (turns BLACK), 
+       insert it at the FRONT of a linked list
+    3. Return the linked list of vertices
+
+Alternatively:
+    1. Call DFS(G) to compute finish times
+    2. Sort vertices by decreasing finish time
+    3. Return the sorted list</div>
+
+                    <p><strong>Key insight:</strong> If edge (u,v) exists, then f[u] &gt; f[v] (u finishes after v). By ordering vertices by decreasing finish time, we ensure u appears before v.</p>
+
+                    <h4>Correctness</h4>
+                    <div class="feature-box">
+                        <h4>Why it works:</h4>
+                        <p>For any edge (u,v) in a DAG:</p>
+                        <ol>
+                            <li>When we explore (u,v), vertex v can be:
+                                <ul>
+                                    <li><strong>WHITE:</strong> We visit v, complete its subtree, then finish v before finishing u. So f[v] &lt; f[u]. ✓</li>
+                                    <li><strong>GRAY:</strong> Would be a back edge → cycle! But we have a DAG, so this can't happen.</li>
+                                    <li><strong>BLACK:</strong> We already finished v, so f[v] &lt; f[u]. ✓</li>
+                                </ul>
+                            </li>
+                            <li>In all cases: f[v] &lt; f[u], so u appears before v in decreasing finish time order</li>
+                        </ol>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Important Properties:</strong>
+                        <ul>
+                            <li>Topological sort is <strong>only defined for DAGs</strong></li>
+                            <li>If graph has a cycle, topological sort is impossible</li>
+                            <li>A DAG may have multiple valid topological orderings</li>
+                            <li>Time complexity: O(V + E) (same as DFS)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Interactive Topological Sort</h3>
+                    <div class="info-box">
+                        <strong>Problem:</strong> Compute topological sort of DAG with vertices {a,b,c,d,e,f} using DFS.
+                    </div>
+                    <div class="viz-container">
+                        <div class="step-controls">
+                            <button class="btn btn-secondary" onclick="m3PrevStep()">← Previous</button>
+                            <span class="step-indicator" id="m3-step">Step 1 of 13</span>
+                            <button class="btn btn-secondary" onclick="m3NextStep()">Next →</button>
+                            <button class="btn btn-secondary" onclick="m3Reset()">Reset</button>
+                        </div>
+                        <div id="m3-operation" class="operation-text">Starting DFS from vertex a</div>
+                        <canvas id="m3Canvas" width="900" height="550"></canvas>
+                        <div id="m3-explanation" class="explanation-text">Initialize: All vertices WHITE, topological order = []</div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #FFFFFF;"></div>
+                            <span>WHITE</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #999999;"></div>
+                            <span>GRAY</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #333333;"></div>
+                            <span>BLACK</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Practice Questions</h3>
+
+                    <div class="content-card">
+                        <h4>Q1: Compute Topological Sort</h4>
+                        <p><strong>Question:</strong> Given DAG with vertices {p,q,r,s,t} and edges p→q, p→r, q→s, r→s, r→t, s→t, compute a topological sort showing the DFS process.</p>
+                        <button class="btn" onclick="toggleSolution('m3q1-sol')">Show Solution</button>
+                        <div id="m3q1-sol" class="solution-content" style="display: none;">
+                            <canvas id="m3q1Canvas" width="800" height="400"></canvas>
+                            <div class="code-block">DFS Execution (starting from p):
+
+1. Visit p: d[p]=1
+2. Visit q: d[q]=2
+3. Visit s: d[s]=3
+4. Visit t: d[t]=4
+5. Finish t: f[t]=5, add t to FRONT of list → [t]
+6. Finish s: f[s]=6, add s to FRONT → [s,t]
+7. Finish q: f[q]=7, add q to FRONT → [q,s,t]
+8. Visit r (from p): d[r]=8
+9. r→s: s is BLACK, skip
+10. r→t: t is BLACK, skip
+11. Finish r: f[r]=9, add r to FRONT → [r,q,s,t]
+12. Finish p: f[p]=10, add p to FRONT → [p,r,q,s,t]
+
+Final topological order: p, r, q, s, t
+
+Verification:
+  p→q: p before q ✓
+  p→r: p before r ✓
+  q→s: q before s ✓
+  r→s: r before s ✓
+  r→t: r before t ✓
+  s→t: s before t ✓</div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>Q2: Why DAGs Only?</h4>
+                        <p><strong>Question:</strong> Why must the graph be acyclic for topological sort to work? What happens if there's a cycle?</p>
+                        <button class="btn" onclick="toggleSolution('m3q2-sol')">Show Solution</button>
+                        <div id="m3q2-sol" class="solution-content" style="display: none;">
+                            <h4>Solution:</h4>
+                            <p><strong>Why DAGs are required:</strong></p>
+                            <p>Topological sort requires that for every edge (u,v), vertex u appears before v in the ordering. This creates a <em>precedence constraint</em>: u must come before v.</p>
+
+                            <p><strong>What happens with a cycle:</strong></p>
+                            <ol>
+                                <li>Suppose we have a cycle: A → B → C → A</li>
+                                <li>From edge A→B: A must come before B</li>
+                                <li>From edge B→C: B must come before C</li>
+                                <li>From edge C→A: C must come before A</li>
+                                <li>Combined: A must come before B, B before C, C before A</li>
+                                <li>This means: A must come before A (impossible!)</li>
+                            </ol>
+
+                            <p><strong>Mathematical perspective:</strong></p>
+                            <ul>
+                                <li>Topological ordering requires a <strong>partial order</strong> on vertices</li>
+                                <li>Partial orders must be <strong>transitive</strong> and <strong>antisymmetric</strong></li>
+                                <li>A cycle violates antisymmetry: if u→v→u, we'd need u &lt; v and v &lt; u simultaneously</li>
+                                <li>Therefore, cycles make topological ordering impossible</li>
+                            </ul>
+
+                            <p><strong>Practical detection:</strong></p>
+                            <div class="code-block">Topological-Sort(G):
+    Run DFS(G)
+    if back edge found:
+        return "Graph has cycle - no topological sort exists"
+    else:
+        return vertices in decreasing finish time order</div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>Q3: Edge Property Proof</h4>
+                        <p><strong>Question:</strong> Prove that if edge (u,v) exists in a DAG, then u appears before v in the topological ordering.</p>
+                        <button class="btn" onclick="toggleSolution('m3q3-sol')">Show Solution</button>
+                        <div id="m3q3-sol" class="solution-content" style="display: none;">
+                            <h4>Solution:</h4>
+                            <p><strong>Theorem:</strong> In a DAG, if (u,v) is an edge, then f[u] &gt; f[v] after DFS, ensuring u appears before v in topological order.</p>
+
+                            <p><strong>Proof by cases:</strong></p>
+                            <p>Consider the moment when DFS explores edge (u,v) from vertex u. At this time, v can be in one of three states:</p>
+
+                            <p><strong>Case 1: v is WHITE</strong></p>
+                            <ul>
+                                <li>We haven't visited v yet</li>
+                                <li>DFS recursively visits v from u</li>
+                                <li>The entire DFS subtree rooted at v completes</li>
+                                <li>v finishes: f[v] is assigned</li>
+                                <li>Then we return to u and continue</li>
+                                <li>Eventually u finishes: f[u] is assigned</li>
+                                <li>Since f[v] is assigned before f[u]: f[v] &lt; f[u] ✓</li>
+                            </ul>
+
+                            <p><strong>Case 2: v is GRAY</strong></p>
+                            <ul>
+                                <li>v is currently on the DFS stack (ancestor of u)</li>
+                                <li>Edge (u,v) would be a back edge</li>
+                                <li>Back edges create cycles</li>
+                                <li>But we have a DAG (no cycles)</li>
+                                <li><strong>This case cannot occur!</strong> ✓</li>
+                            </ul>
+
+                            <p><strong>Case 3: v is BLACK</strong></p>
+                            <ul>
+                                <li>We already finished exploring v</li>
+                                <li>f[v] was assigned before we reached u</li>
+                                <li>f[u] will be assigned later</li>
+                                <li>Therefore: f[v] &lt; f[u] ✓</li>
+                            </ul>
+
+                            <p><strong>Conclusion:</strong></p>
+                            <ul>
+                                <li>In all possible cases: f[v] &lt; f[u]</li>
+                                <li>Topological sort orders by decreasing finish time</li>
+                                <li>Since f[u] &gt; f[v], vertex u appears before v</li>
+                                <li>This holds for all edges (u,v), so the ordering is valid ∎</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Graph positions for visualizations
+        const graphPos = {
+            a: [150, 150],
+            b: [300, 100],
+            c: [150, 350],
+            x: [450, 150],
+            y: [450, 250],
+            z: [300, 350]
+        };
+
+        const topoPos = {
+            a: [150, 100],
+            b: [300, 100],
+            c: [150, 250],
+            d: [450, 100],
+            e: [600, 100],
+            f: [300, 250]
+        };
+
+        // Module 1: DFS on Directed Graphs
+        const module1Data = {
+            currentStep: 0,
+            steps: [
+                {time:0, action:"Initialize all WHITE", colors:{a:'WHITE',b:'WHITE',c:'WHITE',x:'WHITE',y:'WHITE',z:'WHITE'}, disc:{}, finish:{}, stack:[], exp:"All vertices undiscovered, time = 0"},
+                {time:1, action:"Visit a, d[a]=1", colors:{a:'GRAY',b:'WHITE',c:'WHITE',x:'WHITE',y:'WHITE',z:'WHITE'}, disc:{a:1}, finish:{}, stack:['a'], exp:"Start DFS from a, discover a at time 1"},
+                {time:2, action:"Visit b (from a), d[b]=2", colors:{a:'GRAY',b:'GRAY',c:'WHITE',x:'WHITE',y:'WHITE',z:'WHITE'}, disc:{a:1,b:2}, finish:{}, stack:['a','b'], exp:"Explore edge a→b, discover b at time 2"},
+                {time:3, action:"Visit y (from b), d[y]=3", colors:{a:'GRAY',b:'GRAY',c:'WHITE',x:'WHITE',y:'GRAY',z:'WHITE'}, disc:{a:1,b:2,y:3}, finish:{}, stack:['a','b','y'], exp:"Explore edge b→y, discover y at time 3"},
+                {time:4, action:"Finish y, f[y]=4", colors:{a:'GRAY',b:'GRAY',c:'WHITE',x:'WHITE',y:'BLACK',z:'WHITE'}, disc:{a:1,b:2,y:3}, finish:{y:4}, stack:['a','b'], exp:"No outgoing edges from y, finish y at time 4"},
+                {time:5, action:"Finish b, f[b]=5", colors:{a:'GRAY',b:'BLACK',c:'WHITE',x:'WHITE',y:'BLACK',z:'WHITE'}, disc:{a:1,b:2,y:3}, finish:{b:5,y:4}, stack:['a'], exp:"All edges from b explored, finish b at time 5"},
+                {time:6, action:"Visit x (from a), d[x]=6", colors:{a:'GRAY',b:'BLACK',c:'WHITE',x:'GRAY',y:'BLACK',z:'WHITE'}, disc:{a:1,b:2,x:6,y:3}, finish:{b:5,y:4}, stack:['a','x'], exp:"Back to a, explore edge a→x, discover x at time 6"},
+                {time:7, action:"Finish x, f[x]=7", colors:{a:'GRAY',b:'BLACK',c:'WHITE',x:'BLACK',y:'BLACK',z:'WHITE'}, disc:{a:1,b:2,x:6,y:3}, finish:{b:5,x:7,y:4}, stack:['a'], exp:"Edges from x: x→b (BLACK), x→y (BLACK), finish x at time 7"},
+                {time:8, action:"Finish a, f[a]=8", colors:{a:'BLACK',b:'BLACK',c:'WHITE',x:'BLACK',y:'BLACK',z:'WHITE'}, disc:{a:1,b:2,x:6,y:3}, finish:{a:8,b:5,x:7,y:4}, stack:[], exp:"All edges from a explored, finish a at time 8"},
+                {time:9, action:"Visit c, d[c]=9", colors:{a:'BLACK',b:'BLACK',c:'GRAY',x:'BLACK',y:'BLACK',z:'WHITE'}, disc:{a:1,b:2,c:9,x:6,y:3}, finish:{a:8,b:5,x:7,y:4}, stack:['c'], exp:"Start new DFS tree from c, discover c at time 9"},
+                {time:10, action:"Visit z (from c), d[z]=10", colors:{a:'BLACK',b:'BLACK',c:'GRAY',x:'BLACK',y:'BLACK',z:'GRAY'}, disc:{a:1,b:2,c:9,x:6,y:3,z:10}, finish:{a:8,b:5,x:7,y:4}, stack:['c','z'], exp:"Explore edge c→z, discover z at time 10"},
+                {time:11, action:"Finish z, f[z]=11", colors:{a:'BLACK',b:'BLACK',c:'GRAY',x:'BLACK',y:'BLACK',z:'BLACK'}, disc:{a:1,b:2,c:9,x:6,y:3,z:10}, finish:{a:8,b:5,x:7,y:4,z:11}, stack:['c'], exp:"Edge z→z is a self-loop (back edge), finish z at time 11"},
+                {time:12, action:"Finish c, f[c]=12", colors:{a:'BLACK',b:'BLACK',c:'BLACK',x:'BLACK',y:'BLACK',z:'BLACK'}, disc:{a:1,b:2,c:9,x:6,y:3,z:10}, finish:{a:8,b:5,c:12,x:7,y:4,z:11}, stack:[], exp:"Edge c→y (BLACK) is cross edge, finish c at time 12. DFS complete!"},
+                {time:12, action:"DFS Complete - Final Timestamps", colors:{a:'BLACK',b:'BLACK',c:'BLACK',x:'BLACK',y:'BLACK',z:'BLACK'}, disc:{a:1,b:2,c:9,x:6,y:3,z:10}, finish:{a:8,b:5,c:12,x:7,y:4,z:11}, stack:[], exp:"Two DFS trees: (a, b, y, x) and (c, z). Forest complete."},
+            ]
+        };
+
+        function drawModule1() {
+            const canvas = document.getElementById('m1Canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const step = module1Data.steps[module1Data.currentStep];
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            const edges = [['a','b'],['a','x'],['b','y'],['c','y'],['c','z'],['x','b'],['x','y'],['z','z']];
+            edges.forEach(([u,v]) => {
+                drawArrow(ctx, graphPos[u][0], graphPos[u][1], graphPos[v][0], graphPos[v][1], '#999999', 2, u===v);
+            });
+            
+            // Draw vertices
+            ['a','b','c','x','y','z'].forEach(v => {
+                const [x, y] = graphPos[v];
+                const color = step.colors[v];
+                let fillColor = color === 'WHITE' ? '#FFFFFF' : color === 'GRAY' ? '#999999' : '#333333';
+                
+                ctx.fillStyle = fillColor;
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = color === 'BLACK' ? '#FFFFFF' : '#333333';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 6);
+                
+                // Timestamps
+                const d = step.disc[v] || '-';
+                const f = step.finish[v] || '-';
+                ctx.font = '13px var(--font-family-mono)';
+                ctx.fillStyle = '#d67a2e';
+                ctx.fillText(d + '/' + f, x, y - 45);
+            });
+            
+            // Draw info
+            ctx.fillStyle = '#333333';
+            ctx.font = '14px var(--font-family-mono)';
+            ctx.textAlign = 'left';
+            ctx.fillText('Time: ' + step.time, 20, 470);
+            ctx.fillText('Stack: [' + step.stack.join(', ') + ']', 20, 500);
+        }
+
+        function m1NextStep() {
+            if (module1Data.currentStep < module1Data.steps.length - 1) {
+                module1Data.currentStep++;
+                updateModule1();
+            }
+        }
+
+        function m1PrevStep() {
+            if (module1Data.currentStep > 0) {
+                module1Data.currentStep--;
+                updateModule1();
+            }
+        }
+
+        function m1Reset() {
+            module1Data.currentStep = 0;
+            updateModule1();
+        }
+
+        function updateModule1() {
+            const step = module1Data.steps[module1Data.currentStep];
+            document.getElementById('m1-step').textContent = `Step ${module1Data.currentStep + 1} of ${module1Data.steps.length}`;
+            document.getElementById('m1-operation').textContent = step.action;
+            document.getElementById('m1-explanation').textContent = step.exp;
+            drawModule1();
+        }
+
+        // Module 2: Edge Classification
+        const module2Data = {
+            currentStep: 0,
+            edges: [
+                {from:'a',to:'b',type:'Tree Edge',color:'#10B981',exp:'b is WHITE when (a,b) explored from a. Tree edges form the DFS forest.'},
+                {from:'a',to:'x',type:'Tree Edge',color:'#10B981',exp:'x is WHITE when (a,x) explored from a. Part of DFS tree.'},
+                {from:'b',to:'y',type:'Tree Edge',color:'#10B981',exp:'y is WHITE when (b,y) explored from b. Part of DFS tree.'},
+                {from:'c',to:'y',type:'Cross Edge',color:'#F97316',exp:'y is BLACK when (c,y) explored. Intervals [9,12] and [3,4] are disjoint. Not ancestor-descendant.'},
+                {from:'c',to:'z',type:'Tree Edge',color:'#10B981',exp:'z is WHITE when (c,z) explored from c. Part of second DFS tree.'},
+                {from:'x',to:'b',type:'Back Edge',color:'#EF4444',exp:'b is GRAY when (x,b) explored. Points to ancestor. Interval [6,7] nested in [2,5].'},
+                {from:'x',to:'y',type:'Forward Edge',color:'#3B82F6',exp:'y is BLACK when (x,y) explored. Interval [3,4] nested in [6,7]. Points from ancestor to descendant (non-tree).'},
+                {from:'z',to:'z',type:'Back Edge',color:'#EF4444',exp:'Self-loop. Always a back edge pointing to itself. Indicates a cycle.'},
+            ],
+            timestamps: {a:[1,8],b:[2,5],c:[9,12],x:[6,7],y:[3,4],z:[10,11]}
+        };
+
+        function drawModule2() {
+            const canvas = document.getElementById('m2Canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const allEdges = [['a','b'],['a','x'],['b','y'],['c','y'],['c','z'],['x','b'],['x','y'],['z','z']];
+            const currentEdge = module2Data.edges[module2Data.currentStep];
+            
+            // Draw all edges (gray or classified color)
+            allEdges.forEach(([u,v], idx) => {
+                let color = '#CCCCCC';
+                let width = 2;
+                if (idx <= module2Data.currentStep) {
+                    color = module2Data.edges[idx].color;
+                    width = 3;
+                }
+                if (idx === module2Data.currentStep) {
+                    width = 5;
+                }
+                drawArrow(ctx, graphPos[u][0], graphPos[u][1], graphPos[v][0], graphPos[v][1], color, width, u===v);
+            });
+            
+            // Draw vertices (all BLACK with timestamps)
+            ['a','b','c','x','y','z'].forEach(v => {
+                const [x, y] = graphPos[v];
+                
+                ctx.fillStyle = '#333333';
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 6);
+                
+                // Timestamps
+                const [d, f] = module2Data.timestamps[v];
+                ctx.font = '13px var(--font-family-mono)';
+                ctx.fillStyle = '#d67a2e';
+                ctx.fillText(d + '/' + f, x, y - 45);
+            });
+            
+            // Draw edge info
+            ctx.fillStyle = '#333333';
+            ctx.font = '14px var(--font-family-mono)';
+            ctx.textAlign = 'left';
+            ctx.fillText('Current edge: (' + currentEdge.from + ',' + currentEdge.to + ')', 20, 470);
+            ctx.fillText('Classification: ' + currentEdge.type, 20, 500);
+            
+            // Highlight current edge endpoints
+            [currentEdge.from, currentEdge.to].forEach(v => {
+                const [x, y] = graphPos[v];
+                ctx.strokeStyle = currentEdge.color;
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(x, y, 35, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+        }
+
+        function m2NextStep() {
+            if (module2Data.currentStep < module2Data.edges.length - 1) {
+                module2Data.currentStep++;
+                updateModule2();
+            }
+        }
+
+        function m2PrevStep() {
+            if (module2Data.currentStep > 0) {
+                module2Data.currentStep--;
+                updateModule2();
+            }
+        }
+
+        function m2Reset() {
+            module2Data.currentStep = 0;
+            updateModule2();
+        }
+
+        function updateModule2() {
+            const edge = module2Data.edges[module2Data.currentStep];
+            document.getElementById('m2-step').textContent = `Edge ${module2Data.currentStep + 1} of ${module2Data.edges.length}`;
+            document.getElementById('m2-operation').textContent = `Classifying edge (${edge.from},${edge.to})`;
+            document.getElementById('m2-explanation').textContent = edge.exp;
+            drawModule2();
+        }
+
+        // Module 3: Topological Sort
+        const module3Data = {
+            currentStep: 0,
+            steps: [
+                {time:0,action:"Initialize all WHITE",colors:{a:'WHITE',b:'WHITE',c:'WHITE',d:'WHITE',e:'WHITE',f:'WHITE'},disc:{},finish:{},stack:[],order:[],exp:"Start DFS, topological order = []"},
+                {time:1,action:"Visit a, d[a]=1",colors:{a:'GRAY',b:'WHITE',c:'WHITE',d:'WHITE',e:'WHITE',f:'WHITE'},disc:{a:1},finish:{},stack:['a'],order:[],exp:"Begin DFS from a"},
+                {time:2,action:"Visit b (from a), d[b]=2",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'WHITE',e:'WHITE',f:'WHITE'},disc:{a:1,b:2},finish:{},stack:['a','b'],order:[],exp:"Explore edge a→b"},
+                {time:3,action:"Visit d (from b), d[d]=3",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'GRAY',e:'WHITE',f:'WHITE'},disc:{a:1,b:2,d:3},finish:{},stack:['a','b','d'],order:[],exp:"Explore edge b→d"},
+                {time:4,action:"Finish d, f[d]=4",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'BLACK',e:'WHITE',f:'WHITE'},disc:{a:1,b:2,d:3},finish:{d:4},stack:['a','b'],order:['d'],exp:"d has no WHITE neighbors, finish d, add to FRONT of order"},
+                {time:5,action:"Visit e (from b), d[e]=5",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'BLACK',e:'GRAY',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{d:4},stack:['a','b','e'],order:['d'],exp:"Back to b, explore edge b→e"},
+                {time:6,action:"Finish e, f[e]=6",colors:{a:'GRAY',b:'GRAY',c:'WHITE',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{d:4,e:6},stack:['a','b'],order:['e','d'],exp:"e has no WHITE neighbors, finish e, add to FRONT"},
+                {time:7,action:"Finish b, f[b]=7",colors:{a:'GRAY',b:'BLACK',c:'WHITE',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{b:7,d:4,e:6},stack:['a'],order:['b','e','d'],exp:"All edges from b explored, finish b, add to FRONT"},
+                {time:8,action:"Finish a, f[a]=8",colors:{a:'BLACK',b:'BLACK',c:'WHITE',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,d:3,e:5},finish:{a:8,b:7,d:4,e:6},stack:[],order:['a','b','e','d'],exp:"All edges from a explored, finish a, add to FRONT"},
+                {time:9,action:"Visit c, d[c]=9",colors:{a:'BLACK',b:'BLACK',c:'GRAY',d:'BLACK',e:'BLACK',f:'WHITE'},disc:{a:1,b:2,c:9,d:3,e:5},finish:{a:8,b:7,d:4,e:6},stack:['c'],order:['a','b','e','d'],exp:"Start new DFS tree from c"},
+                {time:10,action:"Visit f (from c), d[f]=10",colors:{a:'BLACK',b:'BLACK',c:'GRAY',d:'BLACK',e:'BLACK',f:'GRAY'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,d:4,e:6},stack:['c','f'],order:['a','b','e','d'],exp:"Explore edge c→f"},
+                {time:11,action:"Finish f, f[f]=11",colors:{a:'BLACK',b:'BLACK',c:'GRAY',d:'BLACK',e:'BLACK',f:'BLACK'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,d:4,e:6,f:11},stack:['c'],order:['f','a','b','e','d'],exp:"f has no outgoing edges, finish f, add to FRONT"},
+                {time:12,action:"Finish c, f[c]=12",colors:{a:'BLACK',b:'BLACK',c:'BLACK',d:'BLACK',e:'BLACK',f:'BLACK'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,c:12,d:4,e:6,f:11},stack:[],order:['c','f','a','b','e','d'],exp:"Finish c, add to FRONT. DFS complete!"},
+                {time:12,action:"Final Topological Order",colors:{a:'BLACK',b:'BLACK',c:'BLACK',d:'BLACK',e:'BLACK',f:'BLACK'},disc:{a:1,b:2,c:9,d:3,e:5,f:10},finish:{a:8,b:7,c:12,d:4,e:6,f:11},stack:[],order:['c','f','a','b','d','e'],exp:"Topological order: c, f, a, b, d, e (by decreasing finish time)"}
+            ]
+        };
+
+        function drawModule3() {
+            const canvas = document.getElementById('m3Canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const step = module3Data.steps[module3Data.currentStep];
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw edges
+            const edges = [['a','b'],['a','d'],['b','d'],['b','e'],['c','f'],['d','e']];
+            edges.forEach(([u,v]) => {
+                drawArrow(ctx, topoPos[u][0], topoPos[u][1], topoPos[v][0], topoPos[v][1], '#999999', 2, false);
+            });
+            
+            // Draw vertices
+            ['a','b','c','d','e','f'].forEach(v => {
+                const [x, y] = topoPos[v];
+                const color = step.colors[v];
+                let fillColor = color === 'WHITE' ? '#FFFFFF' : color === 'GRAY' ? '#999999' : '#333333';
+                
+                ctx.fillStyle = fillColor;
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = color === 'BLACK' ? '#FFFFFF' : '#333333';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 6);
+                
+                // Timestamps
+                const d = step.disc[v] || '-';
+                const f = step.finish[v] || '-';
+                ctx.font = '13px var(--font-family-mono)';
+                ctx.fillStyle = '#d67a2e';
+                ctx.fillText(d + '/' + f, x, y - 45);
+            });
+            
+            // Draw info
+            ctx.fillStyle = '#333333';
+            ctx.font = '14px var(--font-family-mono)';
+            ctx.textAlign = 'left';
+            ctx.fillText('Time: ' + step.time, 20, 370);
+            ctx.fillText('Stack: [' + step.stack.join(', ') + ']', 20, 400);
+            ctx.fillText('Topological Order: [' + step.order.join(', ') + ']', 20, 430);
+            
+            // Draw final ordering visually if complete
+            if (module3Data.currentStep === module3Data.steps.length - 1) {
+                ctx.fillStyle = '#e0f2f1';
+                ctx.fillRect(10, 460, 880, 70);
+                ctx.strokeStyle = '#26a69a';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(10, 460, 880, 70);
+                
+                ctx.fillStyle = '#333333';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText('Final Topological Order:', 20, 485);
+                
+                const orderSpacing = 120;
+                step.order.forEach((v, idx) => {
+                    const x = 70 + idx * orderSpacing;
+                    const y = 505;
+                    
+                    ctx.fillStyle = '#26a69a';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = 'bold 16px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(v, x, y + 5);
+                    
+                    if (idx < step.order.length - 1) {
+                        drawArrow(ctx, x + 20, y, x + orderSpacing - 20, y, '#26a69a', 2, false);
+                    }
+                });
+            }
+        }
+
+        function m3NextStep() {
+            if (module3Data.currentStep < module3Data.steps.length - 1) {
+                module3Data.currentStep++;
+                updateModule3();
+            }
+        }
+
+        function m3PrevStep() {
+            if (module3Data.currentStep > 0) {
+                module3Data.currentStep--;
+                updateModule3();
+            }
+        }
+
+        function m3Reset() {
+            module3Data.currentStep = 0;
+            updateModule3();
+        }
+
+        function updateModule3() {
+            const step = module3Data.steps[module3Data.currentStep];
+            document.getElementById('m3-step').textContent = `Step ${module3Data.currentStep + 1} of ${module3Data.steps.length}`;
+            document.getElementById('m3-operation').textContent = step.action;
+            document.getElementById('m3-explanation').textContent = step.exp;
+            drawModule3();
+        }
+
+        // Helper function to draw arrows
+        function drawArrow(ctx, x1, y1, x2, y2, color, width, isSelfLoop) {
+            if (isSelfLoop) {
+                // Draw self-loop
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.beginPath();
+                ctx.arc(x1 + 35, y1, 20, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Arrow head
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x1 + 35, y1 - 20);
+                ctx.lineTo(x1 + 30, y1 - 25);
+                ctx.lineTo(x1 + 40, y1 - 25);
+                ctx.fill();
+                return;
+            }
+            
+            const headlen = 10;
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const angle = Math.atan2(dy, dx);
+            
+            // Shorten line to stop at circle edge
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const ratio = (dist - 30) / dist;
+            const x2_new = x1 + dx * ratio;
+            const y2_new = y1 + dy * ratio;
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2_new, y2_new);
+            ctx.stroke();
+            
+            // Arrow head
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x2_new, y2_new);
+            ctx.lineTo(x2_new - headlen * Math.cos(angle - Math.PI / 6), y2_new - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x2_new - headlen * Math.cos(angle + Math.PI / 6), y2_new - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Practice question visualizations
+        function drawM1Q1() {
+            const canvas = document.getElementById('m1q1Canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const pos = {s:[150,200],t:[350,150],u:[350,250],v:[550,200]};
+            const edges = [['s','t'],['s','u'],['t','v'],['u','v'],['v','t']];
+            const timestamps = {s:[1,8],t:[2,5],u:[6,7],v:[3,4]};
+            
+            edges.forEach(([u,v]) => {
+                drawArrow(ctx, pos[u][0], pos[u][1], pos[v][0], pos[v][1], '#999999', 2, false);
+            });
+            
+            ['s','t','u','v'].forEach(v => {
+                const [x,y] = pos[v];
+                ctx.fillStyle = '#333333';
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 6);
+                
+                const [d,f] = timestamps[v];
+                ctx.font = '13px var(--font-family-mono)';
+                ctx.fillStyle = '#d67a2e';
+                ctx.fillText(d + '/' + f, x, y - 45);
+            });
+        }
+
+        function drawM2Q1() {
+            const canvas = document.getElementById('m2q1Canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const pos = {a:[150,150],b:[300,100],c:[300,200],d:[450,100],e:[450,200]};
+            const edgeData = [
+                {from:'a',to:'b',color:'#10B981'},
+                {from:'a',to:'c',color:'#10B981'},
+                {from:'b',to:'d',color:'#10B981'},
+                {from:'c',to:'e',color:'#10B981'},
+                {from:'d',to:'b',color:'#EF4444'}
+            ];
+            const timestamps = {a:[1,10],b:[2,5],c:[6,9],d:[3,4],e:[7,8]};
+            
+            edgeData.forEach(({from,to,color}) => {
+                drawArrow(ctx, pos[from][0], pos[from][1], pos[to][0], pos[to][1], color, 3, false);
+            });
+            
+            ['a','b','c','d','e'].forEach(v => {
+                const [x,y] = pos[v];
+                ctx.fillStyle = '#333333';
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 6);
+                
+                const [d,f] = timestamps[v];
+                ctx.font = '13px var(--font-family-mono)';
+                ctx.fillStyle = '#d67a2e';
+                ctx.fillText(d + '/' + f, x, y - 45);
+            });
+        }
+
+        function drawM3Q1() {
+            const canvas = document.getElementById('m3q1Canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const pos = {p:[100,150],q:[250,100],r:[250,200],s:[400,100],t:[400,200]};
+            const edges = [['p','q'],['p','r'],['q','s'],['r','s'],['r','t'],['s','t']];
+            const timestamps = {p:[1,10],q:[2,7],r:[8,9],s:[3,6],t:[4,5]};
+            
+            edges.forEach(([u,v]) => {
+                drawArrow(ctx, pos[u][0], pos[u][1], pos[v][0], pos[v][1], '#999999', 2, false);
+            });
+            
+            ['p','q','r','s','t'].forEach(v => {
+                const [x,y] = pos[v];
+                ctx.fillStyle = '#333333';
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#333333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 18px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 6);
+                
+                const [d,f] = timestamps[v];
+                ctx.font = '13px var(--font-family-mono)';
+                ctx.fillStyle = '#d67a2e';
+                ctx.fillText(d + '/' + f, x, y - 45);
+            });
+            
+            // Draw topological order
+            const order = ['p','r','q','s','t'];
+            ctx.fillStyle = '#e0f2f1';
+            ctx.fillRect(50, 300, 700, 70);
+            ctx.strokeStyle = '#26a69a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(50, 300, 700, 70);
+            
+            ctx.fillStyle = '#333333';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Topological Order:', 60, 325);
+            
+            order.forEach((v, idx) => {
+                const x = 100 + idx * 120;
+                const y = 345;
+                
+                ctx.fillStyle = '#26a69a';
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(v, x, y + 5);
+                
+                if (idx < order.length - 1) {
+                    drawArrow(ctx, x + 20, y, x + 100, y, '#26a69a', 2, false);
+                }
+            });
+        }
+
+        // Solution toggle
+        function toggleSolution(id) {
+            const sol = document.getElementById(id);
+            const btn = event.target;
+            
+            if (sol.style.display === 'none') {
+                sol.style.display = 'block';
+                btn.textContent = 'Hide Solution';
+                
+                // Draw visualizations when shown
+                setTimeout(() => {
+                    if (id === 'm1q1-sol') drawM1Q1();
+                    if (id === 'm2q1-sol') drawM2Q1();
+                    if (id === 'm3q1-sol') drawM3Q1();
+                }, 50);
+            } else {
+                sol.style.display = 'none';
+                btn.textContent = 'Show Solution';
+            }
+        }
+
+        // Section navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            updateModule1();
+            updateModule2();
+            updateModule3();
+        });
+    </script>
+</body>
+</html>
